@@ -1,39 +1,44 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-import numpy as np
+from PyQt5.QtWidgets import QPushButton, QMainWindow, QWidget, QVBoxLayout
+from PyQt5.QtGui import QFont
 from plt_graph import HeatMap
-class HeatMapWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
 
+
+class HeatMapWindow(QMainWindow):
+    def __init__(self, data):
+        super().__init__()
         # Установка основной конфигурации окна
         self.setWindowTitle('Тепловая карта')
-        self.setGeometry(100, 100, 800, 600)
+        self.setFixedSize(1400, 700)
 
-        # Создание центрального виджета и вертикального расположения
-        central_widget = QWidget(self)
-        layout = QVBoxLayout(central_widget)
+        self.load = QPushButton(self)
+        self.load.setGeometry(1100, 600, 250, 50)
+        self.load.setText("Загрузить график")
+        self.load.setFont(QFont("Arial", 11))
+        self.load.clicked.connect(lambda: self.plot(data))
 
-        # Создание FigureCanvas для отображения графика
-        self.canvas = FigureCanvas(Figure(figsize=(10, 8)))
-        layout.addWidget(self.canvas)
+        # Контейнер для графика
+        self.graph_widget = QWidget(self)
+        self.graph_widget.setGeometry(0, 50, 700, 600)
 
-        # Установка центрального виджета
-        self.setCentralWidget(central_widget)
+        # Лейаут для размещения графиков
+        self.graph_layout = QVBoxLayout(self.graph_widget)
 
-        # Пример данных
-        grid_x, grid_y = np.meshgrid(np.linspace(0, 100, 100), np.linspace(0, 100, 100))
-        grid_z = np.sin(grid_x / 10) * np.cos(grid_y / 10)
-        heatmap = HeatMap(grid_x, grid_y, grid_z, 0, 100, 0, 100, 10)
+    def plot(self, data):
+        try:
+            # Создаем экземпляр HeatMap
+            self.heatmap = HeatMap(*data)
 
-        # Построение графика
-        heatmap.chart(self.canvas)
+            # Вызываем метод chart для создания графика
+            self.heatmap.chart()
 
+            # Очищаем предыдущий график, если он был
+            for i in reversed(range(self.graph_layout.count())):
+                self.graph_layout.itemAt(i).widget().setParent(None)
 
-# Основной код для запуска PyQt приложения
-app = QApplication(sys.argv)
-window = HeatMapWindow()
-window.show()
-sys.exit(app.exec_())
+            # Добавляем новый график в виджет
+            self.graph_layout.addWidget(self.heatmap.canvas)
+
+            # Обновляем отображение
+            self.heatmap.canvas.draw()
+        except Exception as e:
+            print(e)
