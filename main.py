@@ -1,6 +1,6 @@
-from interpolate_and_matplotlib import *
+from interpolate import *
 from PyQt5.QtWidgets import QApplication
-from pyqt_window import *
+from pyqt_window_logic import *
 import sys
 
 
