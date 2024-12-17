@@ -39,6 +39,13 @@ class Ui_MainWindow(object):
         font.setPointSize(11)
         self.load_btn.setFont(font)
         self.load_btn.setObjectName("load_btn")
+        self.file_path_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.file_path_btn.setGeometry(QtCore.QRect(190, 101, 191, 28))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.file_path_btn.setFont(font)
+        self.file_path_btn.setObjectName("file_path_btn")
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -50,3 +57,5 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Выберите глубину:"))
         self.label_2.setText(_translate("MainWindow", "Выберите файл:"))
         self.load_btn.setText(_translate("MainWindow", "Загрузить теплокарту"))
+        self.file_path_btn.setText(_translate("MainWindow", "Выбрать файл"))
+

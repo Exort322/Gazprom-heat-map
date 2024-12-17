@@ -1,11 +1,14 @@
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QLabel
 from PyQt5.QtGui import QDoubleValidator
 from plt_graph import HeatMap
 from pyqt_MainWindow_interface import *
+from file_dialog import *
+from interpolate import *
+
 
 
 class HeatMapWindow(QMainWindow, Ui_MainWindow):
-    def __init__(self, data):
+    def __init__(self):
         super().__init__()
         self.setupUi(self)
 
@@ -14,22 +17,40 @@ class HeatMapWindow(QMainWindow, Ui_MainWindow):
         validator.setNotation(QDoubleValidator.StandardNotation)  # Обычная запись
         self.depth_lineEdit.setValidator(validator)
 
-    def plot(self, data):
+        self.file_path_btn.clicked.connect(self.choice_file)
+
+        self.path_label = QLabel(self.centralwidget)
+        self.path_label.setGeometry(10, 135, 400, 30)
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.path_label.setFont(font)
+
+        # подключение кнопки загрузки графика
+        self.load_btn.clicked.connect(self.plot)
+
+    def choice_file(self):
+        # получение пути к файлу
+        ex = File_dialog()
+        self.file_path = ex.openFileNameDialog()
+
+        if self.file_path:
+            # Добавление надписи с путем
+            self.path_label.clear()
+            self.path_label.setText(self.file_path)
+            self.path_label.show()
+
+    def plot(self):
         try:
-            # Создаем экземпляр HeatMap
-            self.heatmap = HeatMap(*data)
+            """Загрузка графика"""
+            depth = float(self.depth_lineEdit.text())  # Глубина для построения тепловой карты
 
-            # Вызываем метод chart для создания графика
-            self.heatmap.chart()
+            data = InterpolateData(depth, self.file_path)  # Получение интерполированных данных
+            interp_data = InterpolateData.interpolate(data)
 
-            # Очищаем предыдущий график, если он был
-            for i in reversed(range(self.graph_layout.count())):
-                self.graph_layout.itemAt(i).widget().setParent(None)
+            graph = HeatMap(*interp_data)  # Отрисовка графика
+            graph.chart()
 
-            # Добавляем новый график в виджет
-            self.graph_layout.addWidget(self.heatmap.canvas)
 
-            # Обновляем отображение
-            self.heatmap.canvas.draw()
+
         except Exception as e:
             print(e)

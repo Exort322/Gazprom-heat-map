@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 
 class HeatMap:
@@ -15,8 +14,7 @@ class HeatMap:
 
     def chart(self):
         # Строим тепловую карту
-        self.figure = plt.figure(figsize=(10, 8))
-        self.canvas = FigureCanvas(self.figure)
+        plt.figure(figsize=(10, 8))
         # колорбар
         self.im = plt.imshow(self.grid_z.T, extent=(self.xmin, self.xmax, self.ymin, self.ymax),
                              origin='lower', cmap='YlGnBu_r', aspect='auto')
@@ -38,4 +36,4 @@ class HeatMap:
         plt.text(self.xmax + 10, self.ymax, 'ТС-3', ha='right', va='top', fontsize=16)
         plt.text(self.xmin - 10, self.ymin, 'ТС-2', ha='left', va='bottom', fontsize=16)
         plt.text(self.xmax + 10, self.ymin, 'ТС-4', ha='right', va='bottom', fontsize=16)
-
+        plt.show()
