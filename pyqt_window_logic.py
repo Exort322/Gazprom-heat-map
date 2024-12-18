@@ -6,7 +6,6 @@ from file_dialog import *
 from interpolate import *
 
 
-
 class HeatMapWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -18,7 +17,7 @@ class HeatMapWindow(QMainWindow, Ui_MainWindow):
         self.depth_lineEdit.setValidator(validator)
 
         self.file_path_btn.clicked.connect(self.choice_file)
-
+        # строка с указанием пути
         self.path_label = QLabel(self.centralwidget)
         self.path_label.setGeometry(10, 135, 400, 30)
         font = QtGui.QFont()
@@ -27,11 +26,15 @@ class HeatMapWindow(QMainWindow, Ui_MainWindow):
 
         # подключение кнопки загрузки графика
         self.load_btn.clicked.connect(self.plot)
+        # путь к csv файлу
+        self.file_path = None
 
     def choice_file(self):
         # получение пути к файлу
         ex = File_dialog()
-        self.file_path = ex.openFileNameDialog()
+        filepath = ex.openFileNameDialog()
+        if filepath != None:
+            self.file_path = filepath
 
         if self.file_path:
             # Добавление надписи с путем
@@ -42,7 +45,7 @@ class HeatMapWindow(QMainWindow, Ui_MainWindow):
     def plot(self):
         try:
             """Загрузка графика"""
-            depth = float(self.depth_lineEdit.text())  # Глубина для построения тепловой карты
+            depth = float(self.depth_lineEdit.text().replace(",", "."))  # Глубина для построения тепловой карты
 
             data = InterpolateData(depth, self.file_path)  # Получение интерполированных данных
             interp_data = InterpolateData.interpolate(data)
