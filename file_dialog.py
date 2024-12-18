@@ -10,6 +10,6 @@ class File_dialog(QWidget):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self, "Выберите файл", "",
-                                                  "All Files (*);;Python Files (*.py)", options=options)
+                                                  "All Files (*);;csv (*.csv)", options=options)
         if fileName:
             return fileName
